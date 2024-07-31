@@ -3,12 +3,14 @@ import pickle
 import pandas as pd
 import numpy as np
 
+from decompress import decompress_model
+
 #ld=pd.read_csv('/content/credit - credit (4).csv')
 
 app = Flask(__name__)
 
-with open('model1.pkl', 'rb') as file:
-    model1 = pickle.load(file)
+model = decompress_model()
+
 
 @app.route('/home',methods=['GET'])
 def home():
