@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Score Model</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <style>
+        /* Custom styles */
+        #creditPerformance {
+            display: none; /* Hide initially */
+            margin-top: 20px;
+        }
+
+        .clear-button {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .clear-button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1>Predict Credit Performance</h1>
+    <form id="creditForm">
+        <label>Annual Income:</label>
+        <input type="number" id="annual_income" step="0.01" required><br><br>
+        
+        <label>Outstanding Debt:</label>
+        <input type="number" id="outstanding_debt" step="0.01" required><br><br>
+        
+        <label>Credit Utilization Ratio:</label>
+        <input type="number" id="Credit_Utilization_Ratio" step="0.01" required><br><br>
+        
+        <label>Changed Credit Limit:</label>
+        <input type="number" id="Changed_Credit_Limit" step="0.000001" required><br><br>
+        
+        <label>Delay from due date:</label>
+        <input type="number" id="Delay_from_due_date" step="0.01" required><br><br>
+        
+        <label>Credit History Age:</label>
+        <input type="number" id="Credit_History_Age" step="0.01" required><br><br>
+        
+        <label>Total EMI per month:</label>
+        <input type="number" id="Total_EMI_per_month" step="0.000001" required><br><br>
+        
+        <label>Amount invested monthly:</label>
+        <input type="number" id="Amount_invested_monthly" step="0.000001" required><br><br>
+        
+        <label>Monthly Balance:</label>
+        <input type="number" id="Monthly_Balance" step="0.000001" required><br><br>
+        
+        <button type="submit">Submit</button>
+        <button type="button" class="clear-button" onclick="clearForm()">Clear</button>
+    </form>
+
+    <div id="creditPerformance">
+        <h2>Credit Performance</h2>
+        <p id="predictionResult"></p>
+    </div>
+
+    <script>
+        document.getElementById('creditForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            // Collecting the form data
+            const data = {
+                annual_income: parseFloat(document.getElementById('annual_income').value),
+                outstanding_debt: parseFloat(document.getElementById('outstanding_debt').value),
+                credit_utilization_ratio: parseFloat(document.getElementById('Credit_Utilization_Ratio').value),
+                changed_credit_limit: parseFloat(document.getElementById('Changed_Credit_Limit').value),
+                delay_from_due_date: parseFloat(document.getElementById('Delay_from_due_date').value),
+                credit_history_age: parseFloat(document.getElementById('Credit_History_Age').value),
+                total_emi_per_month: parseFloat(document.getElementById('Total_EMI_per_month').value),
+                amount_invested_monthly: parseFloat(document.getElementById('Amount_invested_monthly').value),
+                monthly_balance: parseFloat(document.getElementById('Monthly_Balance').value)
+            };
+
+            // Sending the data to the server using fetch
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Handle the response from the server
+                console.log('Success:', result);
+                document.getElementById('predictionResult').textContent = result.prediction;
+                document.getElementById('creditPerformance').style.display = 'block'; // Show the credit performance section
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error processing your request.');
+            });
+        });
+
+        function clearForm() {
+            // Clear all input fields
+            document.getElementById('creditForm').reset();
+            // Hide the Credit Performance section
+            document.getElementById('creditPerformance').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
